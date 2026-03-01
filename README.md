@@ -39,10 +39,16 @@ Download and install [Python 3.10 or later](https://www.python.org/downloads/). 
 Open a terminal (Command Prompt, PowerShell, or your OS terminal) and run:
 
 ```bash
-pip install Pillow imagehash
+pip install -r requirements.txt
 ```
 
 ### 3. Run the Tool
+
+```bash
+python -m manga_cleaner
+```
+
+Or, for backward compatibility:
 
 ```bash
 python manga_cleaner.py
@@ -189,21 +195,21 @@ pip install torch transformers
 
 ## Configuration Reference
 
-All defaults can be edited at the top of `manga_cleaner.py`, but most users should use the GUI controls instead.
+All defaults live in `manga_cleaner/config.py` as fields of the `Config` dataclass, but most users should use the GUI controls instead.
 
-| Variable | Default | GUI Control | Description |
+| Field | Default | GUI Control | Description |
 |---|---|---|---|
-| `WHITE_THRESHOLD` | `250` | White ≥ | Brightness at or above = "white" pixel |
-| `BLACK_THRESHOLD` | `5` | Black ≤ | Brightness at or below = "black" pixel |
-| `SOLID_RATIO` | `0.99` | Solid ratio ≥ | Fraction of solid pixels to flag as blank |
-| `HASH_THRESHOLD` | `8` | Hash dist ≤ | Max pHash distance for near-duplicates |
-| `DRY_RUN` | `True` | Dry-run checkbox | Start in preview-only mode |
-| `ASPECT_RATIO_MIN` | `0.55` | Min ratio | Minimum acceptable width/height |
-| `ASPECT_RATIO_MAX` | `0.80` | Max ratio | Maximum acceptable width/height |
-| `SATURATION_THRESHOLD` | `0.18` | Saturation threshold | Max HSV saturation for B&W manga |
-| `SIZE_OUTLIER_Z` | `2.5` | Z-score threshold | Z-score to flag resolution outliers |
-| `ML_CONFIDENCE_THRESHOLD` | `0.75` | Confidence ≥ | Min confidence to flag as non-manga |
-| `MAX_SCAN_DEPTH` | `4` | *(code only)* | Max folder recursion depth |
+| `white_threshold` | `250` | White ≥ | Brightness at or above = "white" pixel |
+| `black_threshold` | `5` | Black ≤ | Brightness at or below = "black" pixel |
+| `solid_ratio` | `0.99` | Solid ratio ≥ | Fraction of solid pixels to flag as blank |
+| `hash_threshold` | `8` | Hash dist ≤ | Max pHash distance for near-duplicates |
+| `dry_run` | `True` | Dry-run checkbox | Start in preview-only mode |
+| `aspect_ratio_min` | `0.55` | Min ratio | Minimum acceptable width/height |
+| `aspect_ratio_max` | `0.80` | Max ratio | Maximum acceptable width/height |
+| `saturation_threshold` | `0.18` | Saturation threshold | Max HSV saturation for B&W manga |
+| `size_outlier_z` | `2.5` | Z-score threshold | Z-score to flag resolution outliers |
+| `ml_confidence_threshold` | `0.75` | Confidence ≥ | Min confidence to flag as non-manga |
+| `max_scan_depth` | `4` | *(code only)* | Max folder recursion depth |
 
 ---
 
@@ -230,3 +236,29 @@ All defaults can be edited at the top of `manga_cleaner.py`, but most users shou
 - **The Back button** (`B` or `←`) in the preview dialog lets you undo a mistake without starting over
 - **Duplicate detection** keeps the file with the alphabetically lowest filename within each group
 - **Log file** (`cleaning_log.txt`) contains a permanent record of all actions taken
+
+---
+
+## Project Structure
+
+```
+manga_cleaner/              ← Python package
+├── __init__.py             # Package entry point & version
+├── __main__.py             # python -m manga_cleaner support
+├── config.py               # Config dataclass (all thresholds & defaults)
+├── logging_setup.py        # Logger setup + TextHandler
+├── image_helpers.py        # Image loading, blank detection, hashing, duplicates
+├── detection.py            # Aspect ratio, saturation, size outlier filters
+├── ml_classifier.py        # CLIP-based ML detection (non-manga & text-only)
+├── folder_discovery.py     # Recursive folder scanning
+├── processor.py            # Chapter processing pipeline
+├── preview_dialog.py       # Image preview/review dialog (tkinter)
+├── tooltip.py              # Tooltip widget
+└── gui.py                  # Main application window (CleanerApp)
+
+manga_cleaner.py            ← Thin launcher (backward compat)
+requirements.txt            ← pip dependencies
+README.md
+LICENSE
+```
+

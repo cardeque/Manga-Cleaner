@@ -1,0 +1,12 @@
+# Required
+Pillow>=9.0
+imagehash>=4.3
+
+# Optional — needed only for the ML-based filters (text-only + CLIP classifier)
+# Uncomment the lines below to enable ML features:
+# torch>=2.0
+# transformers>=4.30
+
+# Optional — used by the saturation and size-outlier filters for faster math
+# numpy>=1.24
+
